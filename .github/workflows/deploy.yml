@@ -1,0 +1,21 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Ganti dengan branch yang kamu gunakan
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout kode dari repositori
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Setup GitHub Pages deployment
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # Gunakan token otomatis
+          publish_dir: ./  # Jika `index.html` ada di root folder repositori
