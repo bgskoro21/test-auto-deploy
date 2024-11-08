@@ -1,21 +1,26 @@
+name: Auto Deploy to Server
+
+on:
+  push:
+    branches:
+      - main  # Deploy hanya jika ada perubahan di branch `main`
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Bisa menggunakan runner berbasis Linux atau Windows sesuai kebutuhan Anda
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.auto }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 192.168.3.245 >> ~/.ssh/known_hosts  # Menambahkan server ke known_hosts
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.auto }}
 
-      - name: Deploy to Windows Server
-        run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no waterindex@192.168.3.245 << 'EOF'
+    - name: Deploy to Server
+      run: |
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no waterindex@192.168.3.245 << 'EOF'
             cd G:/Project/bagas-auto-deploy
             git pull origin main
             # Menjalankan perintah lain yang dibutuhkan
